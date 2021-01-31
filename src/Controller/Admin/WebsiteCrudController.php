@@ -19,13 +19,13 @@ class WebsiteCrudController extends AbstractCrudController
     {
         return [
             TextField::new('domain'),
-            TextField::new('ftpHost'),
-            TextField::new('ftpUser'),
-            TextField::new('ftpPassword'),
-            TextField::new('sqlAddress'),
-            TextField::new('sqlDataBaseName'),
-            TextField::new('sqlUser'),
-            TextField::new('sqlPassword'),
+            TextField::new('ftpHost')->hideOnIndex(),
+            TextField::new('ftpUser')->hideOnIndex(),
+            TextField::new('CryptedFtpPassword')->hideOnIndex(),
+            TextField::new('sqlAddress')->hideOnIndex(),
+            TextField::new('sqlDataBaseName')->hideOnIndex(),
+            TextField::new('sqlUser')->hideOnIndex(),
+            TextField::new('CryptedSqlPassword')->hideOnIndex(),
             AssociationField::new('customer'),
         ];
     }

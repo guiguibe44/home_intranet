@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\WebsiteRepository;
+use App\Security\Crypt;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -118,6 +119,22 @@ class Website
         return $this;
     }
 
+    public function setCryptedFtpUser(?string $ftpUser): self
+    {
+        $crypt = new Crypt();
+        $cryptFtpUser = $crypt->encrypt($ftpUser);
+        $this->ftpUser = $cryptFtpUser;
+
+        return $this;
+    }
+    public function getCryptedFtpUser(): ?string
+    {
+        $crypt = new Crypt();
+        $uncryptedFtpUser = $crypt->decrypt($this->ftpUser);
+        return $uncryptedFtpUser;
+    }
+
+
     public function getFtpPassword(): ?string
     {
         return $this->ftpPassword;
@@ -128,6 +145,21 @@ class Website
         $this->ftpPassword = $ftpPassword;
 
         return $this;
+    }
+
+    public function setCryptedFtpPassword(?string $ftpPassword): self
+    {
+        $crypt = new Crypt();
+        $cryptFtpPassword = $crypt->encrypt($ftpPassword);
+        $this->ftpPassword = $cryptFtpPassword;
+
+        return $this;
+    }
+    public function getCryptedFtpPassword(): ?string
+    {
+        $crypt = new Crypt();
+        $uncryptedFtpPassword = $crypt->decrypt($this->ftpPassword);
+        return $uncryptedFtpPassword;
     }
 
     public function getSqlAddress(): ?string
@@ -166,6 +198,22 @@ class Website
         return $this;
     }
 
+    public function setCryptedSqlUser(?string $sqlUser): self
+    {
+        $crypt = new Crypt();
+        $cryptSqlUser = $crypt->encrypt($sqlUser);
+        $this->sqlUser = $cryptSqlUser;
+
+        return $this;
+    }
+    public function getCryptedSqlUser(): ?string
+    {
+        $crypt = new Crypt();
+        $uncryptedSqlUser = $crypt->decrypt($this->sqlUser);
+        return $uncryptedSqlUser;
+    }
+
+
     public function getSqlPassword(): ?string
     {
         return $this->sqlPassword;
@@ -176,6 +224,21 @@ class Website
         $this->sqlPassword = $sqlPassword;
 
         return $this;
+    }
+
+    public function setCryptedSqlPassword(?string $password): self
+    {
+        $crypt = new Crypt();
+        $cryptPwd = $crypt->encrypt($password);
+        $this->sqlPassword = $cryptPwd;
+
+        return $this;
+    }
+    public function getCryptedSqlPassword(): ?string
+    {
+        $crypt = new Crypt();
+        $uncryptedPassword = $crypt->decrypt($this->sqlPassword);
+        return $uncryptedPassword;
     }
 
     /**
