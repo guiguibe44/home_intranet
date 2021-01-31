@@ -41,6 +41,8 @@ class User implements UserInterface
      */
     private $password;
 
+    private ?string $plainPassword = null;
+
     /**
      * @ORM\ManyToMany(targetEntity=Website::class, mappedBy="customer")
      */
@@ -152,7 +154,17 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $password): void
+    {
+        $this->plainPassword = $password;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
     }
 
     /**
