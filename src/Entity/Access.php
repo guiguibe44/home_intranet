@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AccessRepository;
+use App\Security\Crypt;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
@@ -97,6 +98,22 @@ class Access
         return $this;
     }
 
+    public function setCryptedLogin(?string $login): self
+    {
+        $crypt = new Crypt();
+        $cryptLogin = $crypt->encrypt($login);
+        $this->login = $cryptLogin;
+
+        return $this;
+    }
+    public function getCryptedLogin(): ?string
+    {
+        $crypt = new Crypt();
+        $uncryptedLogin = $crypt->decrypt($this->login);
+        return $uncryptedLogin;
+    }
+
+
     public function getPassword(): ?string
     {
         return $this->password;
@@ -108,6 +125,21 @@ class Access
 
         return $this;
     }
+    public function setCryptedPassword(?string $password): self
+    {
+        $crypt = new Crypt();
+        $cryptPwd = $crypt->encrypt($password);
+        $this->password = $cryptPwd;
+
+        return $this;
+    }
+    public function getCryptedPassword(): ?string
+    {
+        $crypt = new Crypt();
+        $uncryptedPassword = $crypt->decrypt($this->password);
+        return $uncryptedPassword;
+    }
+
 
     public function __toString()
     {
