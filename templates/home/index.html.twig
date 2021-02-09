@@ -1,20 +1,101 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Accueil{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    {# IS_AUTHENTICATED_FULLY #}
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+        <div class="container-fluid my-5">
+            <div class="row">
+                <div class="col-10 offset-1">
+                    <div class="p-5 d-block">
+                        <table class="table table-sm table-striped table-bordered dt-responsive nowrap dataTable no-footer dtr-inline collapsed" >
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Domaine</th>
+                                <th>Client</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for website in websites %}
+                                {% set customers = website.getCustomer() %}
+                                <tr>
+                                    <td></td>
+                                    <td>{{ website.getDomain() }}</td>
+                                    <td>
+                                        {% for customer in customers %}
+                                        <span class="badge badge-secondary">{{ customer.getEmail() }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div id="tableBtns"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <p>Vous devez vous connecter, <a href="{{ path('app_login') }}" >cliquez ici</a>.</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    <script>
+        const eventSource = new EventSource('http://localhost:3000/.well-known/mercure?topic=' + encodeURIComponent('http://example.com/books/1'));
+        eventSource.onmessage = event => {
+            // Will be called every time an update is published by the server
+            console.log(JSON.parse(event.data));
+        }
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    </script>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/Applications/MAMP/htdocs/home_intranet/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/Applications/MAMP/htdocs/home_intranet/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <script>
+        $(document).ready(function() {
+            var table = $('.table').DataTable( {
+                "pageLength": 50,
+                columnDefs: [ {
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets:   0
+                } ],
+                select: {
+                    style: 'multi+shift',
+                    info: false,
+                    selector: 'td:first-child',
+                    //className: 'row-selected',
+                },
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
+                    searchBuilder:{
+                        add: '+',
+                        title: {
+                            0: 'Filtrer',
+                            _: 'Filtres (%d)'
+                        },
+                    }
+                },
+                responsive: true,
+                autoFill: false,
+                fixedHeader: true,
+                buttons: [
+                    { "extend": 'pdf', "text":'<i class="far fa-file-pdf" data-toggle="tooltip" data-placement="top" title="Export pdf"></i>',"className": 'btn btn-info btn-sm' },
+                    { "extend": 'print', "text":'<i class="fas fa-print" data-toggle="tooltip" data-placement="top" title="Imprimer"></i>',"className": 'btn btn-info btn-sm' },
+                    { "extend": 'excel', "text":'<i class="fas fa-file-excel" data-toggle="tooltip" data-placement="top" title="Export Excel"></i>',"className": 'btn btn-info btn-sm' },
+                    { "extend": 'copy', "text":'<i class="far fa-copy" data-toggle="tooltip" data-placement="top" title="Copier"></i>',"className": 'btn btn-info btn-sm' },
+                ],
+                order: [[ 1, 'asc' ]],
+                dom: "<'row'<'col-sm-12 col-md-6 py-2'B><'col-sm-12 col-md-6 py-2'f>>t<'row'<'col-sm-12 col-md-4 py-2'l><'col-sm-12 col-md-4 py-2'i><'col-sm-12 col-md-4 py-2'p>><'row'<'col-sm-12'Q>>",
+            } );
+        } );
+    </script>
 {% endblock %}
